@@ -9,7 +9,7 @@ class Article extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['title', 'slug', 'description', 'content', 'source_id', 'author', 'category_id', 'url', 'thumbnail', 'published_at', 'fetched_at'];
+    protected $fillable = ['merchant_id' ,'title', 'slug', 'description', 'content', 'source_id', 'author', 'category_id', 'url', 'thumbnail', 'published_at', 'fetched_at'];
 
     public function source()
     {

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\app\DTO;
+namespace App\DTO;
 
 
 class ArticleDTO
@@ -10,7 +10,7 @@ class ArticleDTO
         public string $slug,
         public ?string $description,
         public ?string $content,
-        public string $source,
+        public int $source_id,
         public ?string $author,
         public ?string $category,
         public string $url,
@@ -25,7 +25,7 @@ class ArticleDTO
             'slug' => $this->slug,
             'description' => $this->description,
             'content' => $this->content,
-            'source' => $this->source,
+            'source_id' => $this->source_id,
             'author' => $this->author,
             'category' => $this->category,
             'url' => $this->url,
