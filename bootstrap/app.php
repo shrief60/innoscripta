@@ -17,6 +17,8 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withSchedule(function (Schedule $schedule): void {
         $schedule->command('news:fetch')->hourly();
+        // clear cache daily as fallback for manual cache invalidation when new articles are added
+        $schedule->command('cache:clear-app')->daily();
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

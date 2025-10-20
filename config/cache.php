@@ -14,7 +14,7 @@ return [
     | specified when running a cache operation inside the application.
     |
     */
-
+    // we can use Redis or Memcached for caching it will be faster and more reliable than database in production
     'default' => env('CACHE_STORE', 'database'),
 
     /*

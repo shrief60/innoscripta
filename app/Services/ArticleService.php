@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Repositories\ArticleRepository;
+use App\Services\CacheService;
 use Illuminate\Support\Facades\Log;
 
 class ArticleService
@@ -50,6 +51,15 @@ class ArticleService
         // Store valid articles
         $result = $this->repository->storeMany($validated['valid']);
         $result['skipped'] = count($validated['invalid']) + $duplicatesRemoved;
+
+        // Invalidate article caches if articles were inserted or updated
+        if ($result['inserted'] > 0 || $result['updated'] > 0) {
+            CacheService::invalidateArticles();
+            Log::info('Article cache invalidated', [
+                'inserted' => $result['inserted'],
+                'updated' => $result['updated']
+            ]);
+        }
 
         return $result;
     }
