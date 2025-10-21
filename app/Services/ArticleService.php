@@ -2,14 +2,14 @@
 
 namespace App\Services;
 
-use App\Repositories\ArticleRepository;
+use App\Contracts\ArticleRepositoryInterface;
 use App\Services\CacheService;
 use Illuminate\Support\Facades\Log;
 
 class ArticleService
 {
     public function __construct(
-        protected ArticleRepository $repository
+        protected ArticleRepositoryInterface $repository
     ) {}
 
     /**

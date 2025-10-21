@@ -54,4 +54,16 @@ class User extends Authenticatable
     {
         return $this->hasOne(UserPreference::class);
     }
+
+    /**
+     * Get or create user preferences
+     * 
+     * @return UserPreference
+     */
+    public function getOrCreatePreference(): UserPreference
+    {
+        return $this->preference()->firstOrCreate([
+            'user_id' => $this->id
+        ]);
+    }
 }

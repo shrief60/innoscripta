@@ -2,13 +2,14 @@
 
 namespace App\Repositories;
 
+use App\Contracts\ArticleRepositoryInterface;
 use App\Models\Article;
 use App\Services\CacheService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Database\QueryException;
 
-class ArticleRepository
+class ArticleRepository implements ArticleRepositoryInterface
 {
     /**
      * Maximum articles to process in a single batch
@@ -17,7 +18,6 @@ class ArticleRepository
 
     /**
      * Store multiple articles with upsert (insert or update)
-     * Assumes articles are already validated and deduplicated
      * 
      * @param array $articles Array of validated article data
      * @return array ['inserted' => int, 'updated' => int, 'failed' => int, 'errors' => array]
@@ -165,6 +165,7 @@ class ArticleRepository
         $this->applySourceFilter($query, $filters);
         $this->applyCategoryFilter($query, $filters);
         $this->applyAuthorFilter($query, $filters);
+        $this->applyPreferredAuthorsFilter($query, $filters);
         $this->applyDateRangeFilter($query, $filters);
         $this->applySorting($query, $filters);
 
@@ -224,6 +225,27 @@ class ArticleRepository
     {
         if (!empty($filters['author'])) {
             $query->byAuthor($filters['author']);
+        }
+    }
+
+    /**
+     * Apply preferred authors filter (for personalized feed)
+     * Matches articles by any of the user's preferred authors
+     * 
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param array $filters
+     * @return void
+     */
+    protected function applyPreferredAuthorsFilter($query, array $filters): void
+    {
+        if (!empty($filters['preferred_authors'])) {
+            $authors = $filters['preferred_authors'];
+            
+            $query->where(function($q) use ($authors) {
+                foreach ($authors as $author) {
+                    $q->orWhere('author', 'like', "%{$author}%");
+                }
+            });
         }
     }
 
