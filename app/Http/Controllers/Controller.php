@@ -8,7 +8,7 @@ namespace App\Http\Controllers;
  *     version="1.0.0",
  *     description="API for aggregating news from multiple sources with personalized feeds",
  *     @OA\Contact(
- *         email="support@newsaggregator.com"
+ *         email="sherifanwar766@gmail.com"
  *     )
  * )
  * 

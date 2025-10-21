@@ -1,10 +1,10 @@
 {
     "openapi": "3.0.0",
     "info": {
-        "title": "News Aggregator API",
+        "title": "News Aggregator API Documentation",
         "description": "API for aggregating news from multiple sources with personalized feeds",
         "contact": {
-            "email": "support@newsaggregator.com"
+            "email": "sherifanwar766@gmail.com"
         },
         "version": "1.0.0"
     },
