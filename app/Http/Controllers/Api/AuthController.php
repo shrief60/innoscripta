@@ -13,7 +13,51 @@ use Illuminate\Validation\ValidationException;
 class AuthController extends Controller
 {
     /**
-     * Login user and return API token
+     * @OA\Post(
+     *     path="/api/v1/login",
+     *     tags={"Authentication"},
+     *     summary="Login user",
+     *     description="Authenticate user and return API token",
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"email","password"},
+     *             @OA\Property(property="email", type="string", format="email", example="tech@example.com"),
+     *             @OA\Property(property="password", type="string", format="password", example="password")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Login successful",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Login successful"),
+     *             @OA\Property(
+     *                 property="user",
+     *                 type="object",
+     *                 @OA\Property(property="id", type="integer", example=1),
+     *                 @OA\Property(property="name", type="string", example="Tech Enthusiast"),
+     *                 @OA\Property(property="email", type="string", example="tech@example.com")
+     *             ),
+     *             @OA\Property(property="token", type="string", example="1|xxxxxxxxxxxxxxxxxxxxx")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation error or invalid credentials",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="The provided credentials are incorrect."),
+     *             @OA\Property(
+     *                 property="errors",
+     *                 type="object",
+     *                 @OA\Property(
+     *                     property="email",
+     *                     type="array",
+     *                     @OA\Items(type="string", example="The provided credentials are incorrect.")
+     *                 )
+     *             )
+     *         )
+     *     )
+     * )
      */
     public function login(Request $request)
     {
@@ -47,7 +91,27 @@ class AuthController extends Controller
     }
 
     /**
-     * Logout user (revoke current token)
+     * @OA\Post(
+     *     path="/api/v1/logout",
+     *     tags={"Authentication"},
+     *     summary="Logout user",
+     *     description="Revoke current user's API token",
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Logout successful",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Logged out successfully")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthenticated",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Unauthenticated.")
+     *         )
+     *     )
+     * )
      */
     public function logout(Request $request)
     {
@@ -59,7 +123,43 @@ class AuthController extends Controller
     }
 
     /**
-     * Get authenticated user info
+     * @OA\Get(
+     *     path="/api/v1/me",
+     *     tags={"Authentication"},
+     *     summary="Get authenticated user info",
+     *     description="Get current user information and preferences",
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="User information retrieved successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(
+     *                 property="user",
+     *                 type="object",
+     *                 @OA\Property(property="id", type="integer", example=1),
+     *                 @OA\Property(property="name", type="string", example="Tech Enthusiast"),
+     *                 @OA\Property(property="email", type="string", example="tech@example.com")
+     *             ),
+     *             @OA\Property(
+     *                 property="preferences",
+     *                 type="object",
+     *                 @OA\Property(property="sources", type="array", @OA\Items(type="string", example="guardian")),
+     *                 @OA\Property(property="categories", type="array", @OA\Items(type="string", example="technology")),
+     *                 @OA\Property(property="authors", type="array", @OA\Items(type="string", example="John Doe")),
+     *                 @OA\Property(property="articles_per_page", type="integer", example=20),
+     *                 @OA\Property(property="default_sort", type="string", example="published_at"),
+     *                 @OA\Property(property="default_order", type="string", example="desc")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthenticated",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Unauthenticated.")
+     *         )
+     *     )
+     * )
      */
     public function me(Request $request)
     {
