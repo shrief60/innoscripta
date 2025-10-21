@@ -156,7 +156,7 @@ Edit `.env` file with your settings:
 APP_NAME="News Aggregator"
 APP_ENV=local
 APP_DEBUG=true
-APP_URL=http://localhost:8000
+APP_URL=http://news-aggregator.test
 
 DB_CONNECTION=sqlite
 # DB_CONNECTION=mysql (for production)
@@ -257,7 +257,7 @@ This creates test users:
 php artisan serve
 ```
 
-Server will start at `http://localhost:8000`
+Server will start at `http://news-aggregator.test`
 
 ### Fetch Latest Articles
 ```bash
@@ -289,7 +289,7 @@ php artisan cache:stats
 ### Interactive Documentation
 Access Swagger UI at:
 ```
-http://localhost:8000/api/documentation
+http://news-aggregator.test/api/documentation
 ```
 
 Features:
@@ -351,7 +351,7 @@ GET /api/v1/user/feed?searchTerm=climate&per_page=5
 
 **Login:**
 ```bash
-curl -X POST "http://localhost:8000/api/v1/login" \
+curl -X POST "http://news-aggregator.test/api/v1/login" \
   -H "Accept: application/json" \
   -H "Content-Type: application/json" \
   -d '{"email":"tech@example.com","password":"password"}'
@@ -359,13 +359,13 @@ curl -X POST "http://localhost:8000/api/v1/login" \
 
 **Get Articles:**
 ```bash
-curl -X GET "http://localhost:8000/api/v1/articles?source[]=guardian&category[]=Technology&per_page=10" \
+curl -X GET "http://news-aggregator.test/api/v1/articles?source[]=guardian&category[]=Technology&per_page=10" \
   -H "Accept: application/json"
 ```
 
 **Get Personalized Feed:**
 ```bash
-curl -X GET "http://localhost:8000/api/v1/user/feed" \
+curl -X GET "http://news-aggregator.test/api/v1/user/feed" \
   -H "Accept: application/json" \
   -H "Authorization: Bearer YOUR_TOKEN_HERE"
 ```
@@ -389,7 +389,7 @@ php artisan test --coverage
 
 ### Manual Testing with Postman
 1. Import the OpenAPI spec from `storage/api-docs/api-docs.json`
-2. Or use the Swagger UI at `http://localhost:8000/api/documentation`
+2. Or use the Swagger UI at `http://news-aggregator.test/api/documentation`
 
 ### Test Users (after seeding)
 - Email: `tech@example.com` | Password: `password`
