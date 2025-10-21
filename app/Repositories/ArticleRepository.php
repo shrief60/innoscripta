@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\Article;
+use App\Services\CacheService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Database\QueryException;
@@ -124,6 +125,140 @@ class ArticleRepository
         ];
     }
 
-  
+    /**
+     * Search and filter articles with pagination and caching
+     * 
+     * @param array $filters
+     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
+     */
+    public function search(array $filters = [])
+    {
+        // Skip caching if disabled or in testing
+        if (!CacheService::isEnabled()) {
+            return $this->executeSearch($filters);
+        }
+
+        // Generate cache key (excludes page number for efficiency)
+        $cacheKey = CacheService::queryKey($filters);
+        
+        // For paginated results, we cache each page separately
+        $page = $filters['page'] ?? 1;
+        $fullCacheKey = $cacheKey . ':page:' . $page;
+
+        // Cache the query results
+        return CacheService::rememberQuery($fullCacheKey, function () use ($filters) {
+            return $this->executeSearch($filters);
+        });
+    }
+
+    /**
+     * Execute the actual search query (separated for caching)
+     * 
+     * @param array $filters
+     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
+     */
+    protected function executeSearch(array $filters)
+    {
+        $query = Article::query()->with(['source', 'category']);
+
+        $this->applySearchFilter($query, $filters);
+        $this->applySourceFilter($query, $filters);
+        $this->applyCategoryFilter($query, $filters);
+        $this->applyAuthorFilter($query, $filters);
+        $this->applyDateRangeFilter($query, $filters);
+        $this->applySorting($query, $filters);
+
+        return $query->paginate($filters['per_page']);
+    }
+
+    /**
+     * Apply full-text search filter using query scope
+     * 
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param array $filters
+     * @return void
+     */
+    protected function applySearchFilter($query, array $filters): void
+    {
+        if (!empty($filters['searchTerm'])) {
+            $query->search($filters['searchTerm']);
+        }
+    }
+
+    /**
+     * Apply source filter using query scope
+     * 
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param array $filters
+     * @return void
+     */
+    protected function applySourceFilter($query, array $filters): void
+    {
+        if (!empty($filters['source'])) {
+            $query->bySource($filters['source']);
+        }
+    }
+
+    /**
+     * Apply category filter using query scope
+     * 
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param array $filters
+     * @return void
+     */
+    protected function applyCategoryFilter($query, array $filters): void
+    {
+        if (!empty($filters['category'])) {
+            $query->byCategory($filters['category']);
+        }
+    }
+
+    /**
+     * Apply author filter using query scope
+     * 
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param array $filters
+     * @return void
+     */
+    protected function applyAuthorFilter($query, array $filters): void
+    {
+        if (!empty($filters['author'])) {
+            $query->byAuthor($filters['author']);
+        }
+    }
+
+    /**
+     * Apply date range filter using query scope
+     * 
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param array $filters
+     * @return void
+     */
+    protected function applyDateRangeFilter($query, array $filters): void
+    {
+        $fromDate = $filters['from_date'] ?? null;
+        $toDate = $filters['to_date'] ?? null;
+
+        if ($fromDate || $toDate) {
+            $query->byDateRange($fromDate, $toDate);
+        }
+    }
+
+    /**
+     * Apply sorting using query scope
+     * 
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param array $filters
+     * @return void
+     */
+    protected function applySorting($query, array $filters): void
+    {
+        $sortBy = $filters['sort'] ?? 'published_at';
+        $sortOrder = $filters['order'] ?? 'desc';
+
+        $query->sortBy($sortBy, $sortOrder);
+    }
+
 }
+
 
