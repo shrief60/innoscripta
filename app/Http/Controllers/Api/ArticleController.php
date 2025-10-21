@@ -2,15 +2,16 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Contracts\ArticleRepositoryInterface;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ArticleResource;
 use App\Http\Requests\Api\ArticleIndexRequest;
-use App\Repositories\ArticleRepository;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class ArticleController extends Controller
 {
     public function __construct(
-        protected ArticleRepository $repository
+        protected ArticleRepositoryInterface $repository
     ) {}
 
     /**
@@ -19,10 +20,10 @@ class ArticleController extends Controller
      * @param ArticleIndexRequest $request
      * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
      */
-    public function index(ArticleIndexRequest $request)
+    public function index(ArticleIndexRequest $request) : AnonymousResourceCollection
     {
         $validated = $request->validated();
-        
+
         $articles = $this->repository->search($validated);
 
         return ArticleResource::collection($articles);

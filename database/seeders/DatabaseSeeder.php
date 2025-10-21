@@ -15,15 +15,18 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        // Seed sources first (required for user preferences)
         $this->call([
             SourcesSeeder::class,
         ]);
 
-        // User::factory(10)->create();
-
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+        // Note: UserPreferencesSeeder should be run AFTER fetching articles
+        // so that categories exist. Run it manually:
+        // php artisan db:seed --class=UserPreferencesSeeder
+        //
+        // Or uncomment below if categories already exist:
+        // $this->call([
+        //     UserPreferencesSeeder::class,
+        // ]);
     }
 }
