@@ -385,7 +385,68 @@ php artisan test --testsuite=Unit
 
 # Run with coverage
 php artisan test --coverage
+
+# Run specific test file
+./vendor/bin/phpunit tests/Unit/UserPreferenceFilterBuilderTest.php --testdox
 ```
+
+### Unit Tests Coverage
+
+#### `UserPreferenceFilterBuilderTest` ✅
+Comprehensive tests for filter building logic (11 tests, 55 assertions):
+- ✅ Building filters from user preferences only
+- ✅ Building filters with empty preferences
+- ✅ Overriding preferences with request parameters
+- ✅ Expanding source filters by merging with request
+- ✅ Expanding category filters by merging with request
+- ✅ Removing duplicate sources when merging
+- ✅ Normalizing single value input to array
+- ✅ Adding date range filters from request
+- ✅ Complete scenario with all filter types
+- ✅ Handling null request
+
+**Test File:** `tests/Unit/UserPreferenceFilterBuilderTest.php`
+
+---
+
+#### `ArticleServiceTest` ✅
+Comprehensive tests for article business logic (16 tests, 51 assertions):
+- ✅ Processing empty articles array
+- ✅ Removing duplicates (keeps last occurrence)
+- ✅ Rejecting articles with missing required fields
+- ✅ Rejecting articles with invalid URL
+- ✅ Rejecting articles with title too long
+- ✅ Accepting articles with max length title (255 chars)
+- ✅ Processing valid articles calls repository
+- ✅ Cache invalidation when articles inserted
+- ✅ Cache invalidation when articles updated
+- ✅ No cache invalidation when no changes
+- ✅ Multiple validation errors tracking
+- ✅ Articles without merchant_id removed during deduplication
+- ✅ Complete flow with mixed articles (valid, invalid, duplicates)
+- ✅ Repository failure propagation
+- ✅ Optional fields can be empty
+- ✅ Valid URL formats acceptance (HTTP, HTTPS, with paths)
+
+**Test File:** `tests/Unit/ArticleServiceTest.php`
+
+---
+
+#### `NewsAggregatorServiceTest` ✅
+Comprehensive tests for news fetching orchestration (11 tests, 92 assertions):
+- ✅ Fetching from all sources successfully
+- ✅ Fetching from single source successfully
+- ✅ Handling empty article responses
+- ✅ Exception handling during fetch
+- ✅ Mixed results (inserted, updated, failed, skipped)
+- ✅ DTO to array conversion
+- ✅ Continuing when one source fails
+- ✅ Response structure validation
+- ✅ Error response structure
+- ✅ No sources configured
+- ✅ Default skipped count handling
+
+**Test File:** `tests/Unit/NewsAggregatorServiceTest.php`
 
 ### Manual Testing with Postman
 1. Import the OpenAPI spec from `storage/api-docs/api-docs.json`
